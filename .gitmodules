@@ -1,0 +1,3 @@
+[submodule "internal-core"]
+	path = internal-core
+	url = https://github.com/RM2020-Internal-Group-C/internal-core.git
