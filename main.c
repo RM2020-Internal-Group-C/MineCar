@@ -8,8 +8,8 @@
  *
  */
 #include "ch.h"
-#include "hal.h"
 #include "dbus.h"
+#include "hal.h"
 // Calculation of BRP:
 // Max APB1 clock Frequency: 36MHz
 // Target Baudrate: 1MHz
@@ -49,7 +49,5 @@ int main(void)
     palSetLine(LINE_LED);
     while (true)
     {
-        
-        
     }
 }
