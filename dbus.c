@@ -5,7 +5,6 @@
 static uint8_t rxbuf[DBUS_BUFFER_SIZE];
 static RC_control_t rcCtrl;
 static thread_reference_t uart_dbus_thread_handler = NULL;
-static rc_state_t rc_state = RC_UNCONNECTED;
 systime_t updateTime;
 
 static void rxend(UARTDriver *uartp)
@@ -29,18 +28,14 @@ static void RCReset(void)
 
 static void processRxData(void)
 {
-    rcCtrl.channel0 = ((int16_t)rxbuf[0] | ((int16_t)rxbuf[1] << 8)) & 0x07FF;
-    rcCtrl.channel0 -= RC_CH_VALUE_OFFSET;
-    rcCtrl.channel1 =
-        (((int16_t)rxbuf[1] >> 3) | ((int16_t)rxbuf[2] << 5)) & 0x07FF;
-    rcCtrl.channel1 -= RC_CH_VALUE_OFFSET;
-    rcCtrl.channel2 =   (((int16_t)rxbuf[2] >> 6) | ((int16_t)rxbuf[3] << 2) |
-                        ((int16_t)rxbuf[4] << 10)) &
-                        0x07FF;
-    rcCtrl.channel2 -= RC_CH_VALUE_OFFSET;
-    rcCtrl.channel3 =
-        (((int16_t)rxbuf[4] >> 1) | ((int16_t)rxbuf[5] << 7)) & 0x07FF;
-    rcCtrl.channel3 -= RC_CH_VALUE_OFFSET;
+    rcCtrl.channel0 =   ((int16_t)rxbuf[0] | ((int16_t)rxbuf[1] << 8)) & 0x07FF;
+    rcCtrl.channel0 -=  RC_CH_VALUE_OFFSET;
+    rcCtrl.channel1 =   (((int16_t)rxbuf[1] >> 3) | ((int16_t)rxbuf[2] << 5)) & 0x07FF;
+    rcCtrl.channel1 -=  RC_CH_VALUE_OFFSET;
+    rcCtrl.channel2 =   (((int16_t)rxbuf[2] >> 6) | ((int16_t)rxbuf[3] << 2) | ((int16_t)rxbuf[4] << 10)) & 0x07FF;
+    rcCtrl.channel2 -=  RC_CH_VALUE_OFFSET;
+    rcCtrl.channel3 =   (((int16_t)rxbuf[4] >> 1) | ((int16_t)rxbuf[5] << 7)) & 0x07FF;
+    rcCtrl.channel3 -=  RC_CH_VALUE_OFFSET;
 
     rcCtrl.s1 = ((rxbuf[5] >> 4) & 0x000C) >> 2;
     rcCtrl.s2 = ((rxbuf[5] >> 4) & 0x0003);
@@ -55,7 +50,6 @@ static THD_FUNCTION(uart_dbus_thread, p)
     chRegSetThreadName("uart dbus receiver");
 
     uartStart(UART_DRIVER, &uartcfg);
-    // dmaStreamFree(*UART_DRIVER.dmatx);
     msg_t rxmsg;
     systime_t timeout = TIME_MS2I(4U);
     uint32_t count = 0;
@@ -64,7 +58,6 @@ static THD_FUNCTION(uart_dbus_thread, p)
     {
         uartStopReceive(UART_DRIVER);
         uartStartReceive(UART_DRIVER, DBUS_BUFFER_SIZE, rxbuf);
-        // dmaStreamFree(*UART_DRIVER.dmatx);
         chSysLock();
         rxmsg = chThdSuspendTimeoutS(&uart_dbus_thread_handler, timeout);
         chSysUnlock();
@@ -77,8 +70,6 @@ static THD_FUNCTION(uart_dbus_thread, p)
         }
         else
         {
-            rc_state = RC_UNCONNECTED;
-            RCReset();
             timeout = TIME_MS2I(4U);
         }
         count++;

@@ -41,6 +41,7 @@ int main(void)
     chSysInit();
     // CAN REMAP
     AFIO->MAPR |= AFIO_MAPR_CAN_REMAP_REMAP2;
+    AFIO->MAPR |= AFIO_MAPR_USART1_REMAP;
     RCInit();
     pwmStart(&PWMD3, &pwmcfg);
     pwmEnableChannel(&PWMD3, 0, 3);
