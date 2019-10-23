@@ -66,6 +66,7 @@ int main(void)
     chSysInit();
     // CAN REMAP
     AFIO->MAPR |= AFIO_MAPR_CAN_REMAP_REMAP2;
+    // DBUS REMAP
     AFIO->MAPR |= AFIO_MAPR_USART1_REMAP;
     canStart(&CAND1, &cancfg);
 
