@@ -28,13 +28,13 @@ enum{
 static int16_t targetSpeed[3];
 static float result;
 RC_control_t *rc;
-
+int16_t const maxSpeed=300;
 static const CANConfig cancfg = {
     CAN_MCR_ABOM | CAN_MCR_AWUM | CAN_MCR_TXFP,
     CAN_BTR_SJW(0) | CAN_BTR_TS2(1) | CAN_BTR_TS1(8) | CAN_BTR_BRP(2)};
 static CANRxFrame rxmsg;
 static CANTxFrame txmsg;
-static volatile int16_t encoder[4] = {0, 0, 0, 0};
+static volatile int16_t encoder[4];
 static const PWMConfig pwmcfg = {1000000,
                                  10,
                                  NULL,
@@ -49,8 +49,8 @@ static const PWMConfig pwmcfg = {1000000,
 void setSpeed(int i, int target)
 {
     result = PIDSet(&pidWheel[i], encoder[i], target);
-    txmsg.data8[0] = (int)result / 2 >> 8;
-    txmsg.data8[1] = (int)result / 2 & 0xFF;
+    txmsg.data8[i*2] = (int)result / 2 >> 8;
+    txmsg.data8[i*2+1] = (int)result / 2 & 0xFF;
 }
 
 int main(void)
@@ -84,11 +84,11 @@ int main(void)
     // PID Initialize  wheelStruct; maxOutputCurrent; kp; ki; kd
     for (uint8_t i = 0; i < sizeof(pidWheel) / sizeof(pidWheel[0]); i++)
     {
-        PIDInit(&pidWheel[i], 32000, 750, 0, 0);
+        PIDInit(&pidWheel[i], 20000, 100, 0.015, 10);
     }
 
     /***************************************************************
-     ***************************************************************/
+     ****************************四轮***********************************/
 
     while (true)
     {
@@ -109,9 +109,9 @@ int main(void)
             if (rxmsg.SID == 0x202)
             {
                 encoder[1] = rxmsg.data8[2] << 8 | rxmsg.data8[3];
-                encoder[1] = -(encoder[0]) / 19;
+                encoder[1] = -(encoder[1]) / 19;
             }
-            if (rxmsg.SID == 0x202)
+            if (rxmsg.SID == 0x203)
             {
                 encoder[2] = rxmsg.data8[2] << 8 | rxmsg.data8[3];
                 encoder[2] = -(encoder[2]) / 19;
@@ -122,14 +122,14 @@ int main(void)
                 encoder[3] = -(encoder[3]) / 19;
             }
 
-            setSpeed(0,targetSpeed[FORWARD]);
-            /*
+            // txmsg.data8[4] = (int)700 >> 8;
+            // txmsg.data8[5] = (int) 700 & 0xFF;            
             // move forward or backwward
+            // setSpeed(0, targetSpeed[FORWARD]);
+            // setSpeed(0, targetSpeed[FORWARD]);
             setSpeed(0, targetSpeed[FORWARD]);
-            setSpeed(1, targetSpeed[FORWARD]);
-            setSpeed(2, targetSpeed[FORWARD]);
-            setSpeed(3, targetSpeed[FORWARD]);
-
+            // setSpeed(3, targetSpeed[FORWARD]);
+            /*
             // spin
             setSpeed(0,targetSpeed[SPIN]);
             setSpeed(1,targetSpeed[SPIN]);

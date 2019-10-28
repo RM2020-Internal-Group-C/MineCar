@@ -24,6 +24,7 @@ float PIDSet(pid_t *pid, float get, float set){
     pid->err[NOW] = set - get;
     pid->integral += pid->err[NOW];
     pid->out = (pid->err[NOW] * pid->kp + pid->integral * pid->ki + (pid->err[NOW] - pid->err[LAST]) * pid->kd); 
+    pid->err[LAST] = pid->err[NOW];
     limit(&pid->out, pid->maxOut);
     return pid->out;
 }
