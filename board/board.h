@@ -91,8 +91,8 @@ following refer to stm32f1 reference manual section 9.1
  * 4 - (GPIOA_BUTTON 15) ##the board has hardware debouncing and pull-up resistor installed to the button
  * B - (GPIOA_USART1_TX 9)
  */
-#define VAL_GPIOACRL            0x88888882      /*  PA7...PA0 */
-#define VAL_GPIOACRH            0x588B48B4      /* PA15...PA8 */
+#define VAL_GPIOACRL            0x89888882      /*  PA7...PA0 */
+#define VAL_GPIOACRH            0x588998B4      /* PA15...PA8 */
 #define VAL_GPIOAODR            0xFFFFFFFF
 
 /*
@@ -102,8 +102,8 @@ following refer to stm32f1 reference manual section 9.1
  * E - (GPIOB_I2C2_SDA 11)
  * 4 - (GPIOB_MPU6050_INT 3)
  */
-#define VAL_GPIOBCRL            0x88888888      /*  PB7...PB0 */
-#define VAL_GPIOBCRH            0x8888FF18      /* PB15...PB8 */
+#define VAL_GPIOBCRL            0x88888898      /*  PB7...PB0 */
+#define VAL_GPIOBCRH            0x8888FFB4      /* PB15...PB8 */
 #define VAL_GPIOBODR            0xFFFFFFFF
 
 /*
