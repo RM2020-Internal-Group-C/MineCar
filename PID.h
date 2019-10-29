@@ -2,12 +2,6 @@
 
 #define __PID_H__
 
-enum
-{
-    LAST = 0,
-    NOW = 1,
-};
-
 typedef struct
 {
     float kp;
@@ -17,16 +11,14 @@ typedef struct
     float get;
     float errNOW;
     float errLAST;
-    float integral;
     float out;
     float maxOut;
     float p;
     float i;
     float d;
 } pid_t;
+//Initiallize pid: maxOut:maximum outpus, Kp, Ki, Kd 
 void PIDInit(pid_t *pid, int maxOut, float kp, float ki, float kd);
-
-// void PIDReset(pid_t pid, float kp, float ki, float kd);
 
 float PIDSet(pid_t *pid, float get, float set);
 
