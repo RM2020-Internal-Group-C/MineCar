@@ -24,9 +24,9 @@ enum{
     LEFT,
     SPIN
 };
-
+static const float RCToMotorRatio = 400/660;
 static int16_t targetSpeed[3];
-static float result;
+static int16_t result[4] = {0,0,0,0};
 RC_control_t *rc;
 int16_t const maxSpeed=300;
 static const CANConfig cancfg = {
@@ -48,9 +48,35 @@ static const PWMConfig pwmcfg = {1000000,
 // i stands for the index of motor, respectively 0, 1, 2, 3; targetSpeed
 void setSpeed(int i, int target)
 {
-    result = PIDSet(&pidWheel[i], encoder[i], target);
-    txmsg.data8[i*2] = (int)result / 2 >> 8;
-    txmsg.data8[i*2+1] = (int)result / 2 & 0xFF;
+    result[i] = PIDSet(&pidWheel[i], encoder[i], target);
+    txmsg.data8[i*2] = (int)result[i] >> 8;
+    txmsg.data8[i*2+1] = (int)result[i] & 0xFF;
+}
+// speedX: Xdi
+void movementControl(float speedX, float speedY, float speedA)
+{
+    float speed1 = speedX + speedY + speedA; 
+    float speed2 = speedX - speedY - speedA;
+    float speed3 = speedX - speedY + speedA;
+    float speed4 = speedX + speedY - speedA;
+    
+    float max = speed1;
+    if (max < speed2)   max = speed2;
+    if (max < speed3)   max = speed3;
+    if (max < speed4)   max = speed4;
+    
+    if (max > 400)
+    {
+        speed1 = speed1 / max * 400;
+        speed2 = speed2 / max * 400;
+        speed3 = speed3 / max * 400;
+        speed4 = speed4 / max * 400;
+    }
+    setSpeed(0, speed1);
+    setSpeed(1, -speed2);
+    setSpeed(2, speed3);
+    setSpeed(3, -speed4);
+    
 }
 
 int main(void)
@@ -82,21 +108,17 @@ int main(void)
     RCInit();
 
     // PID Initialize  wheelStruct; maxOutputCurrent; kp; ki; kd
-    for (uint8_t i = 0; i < sizeof(pidWheel) / sizeof(pidWheel[0]); i++)
-    {
-        PIDInit(&pidWheel[i], 20000, 100, 0.015, 10);
-    }
+    PIDInit(&pidWheel[0], 2000, 5, 0, 0);
+    PIDInit(&pidWheel[1], 2000, 5, 0, 0);
+    PIDInit(&pidWheel[2], 2000, 5, 0, 0);
+    PIDInit(&pidWheel[3], 2000, 5, 0, 0);
 
     /***************************************************************
      ****************************四轮***********************************/
 
     while (true)
     {
-        rc = RCGet();
-        targetSpeed[FORWARD] = rc->channel3 * 400 /660;
-        check = targetSpeed[FORWARD];
-        targetSpeed[SPIN] = rc->channel0 * 400 /660;
-        
+
         while (canReceive(&CAND1, CAN_ANY_MAILBOX, &rxmsg, TIME_IMMEDIATE) ==
                MSG_OK)
         {
@@ -104,38 +126,29 @@ int main(void)
             if (rxmsg.SID == 0x201)
             {
                 encoder[0] = rxmsg.data8[2] << 8 | rxmsg.data8[3];
-                encoder[0] = -(encoder[0]) / 19;
+                encoder[0] = (encoder[0]) / 19;
             }
             if (rxmsg.SID == 0x202)
             {
                 encoder[1] = rxmsg.data8[2] << 8 | rxmsg.data8[3];
-                encoder[1] = -(encoder[1]) / 19;
+                encoder[1] = (encoder[1]) / 19;
             }
             if (rxmsg.SID == 0x203)
             {
                 encoder[2] = rxmsg.data8[2] << 8 | rxmsg.data8[3];
-                encoder[2] = -(encoder[2]) / 19;
+                encoder[2] = (encoder[2]) / 19;
             }
             if (rxmsg.SID == 0x204)
             {
                 encoder[3] = rxmsg.data8[2] << 8 | rxmsg.data8[3];
-                encoder[3] = -(encoder[3]) / 19;
+                encoder[3] = (encoder[3]) / 19;
             }
 
-            // txmsg.data8[4] = (int)700 >> 8;
-            // txmsg.data8[5] = (int) 700 & 0xFF;            
-            // move forward or backwward
-            // setSpeed(0, targetSpeed[FORWARD]);
-            // setSpeed(0, targetSpeed[FORWARD]);
-            setSpeed(0, targetSpeed[FORWARD]);
-            // setSpeed(3, targetSpeed[FORWARD]);
-            /*
-            // spin
-            setSpeed(0,targetSpeed[SPIN]);
-            setSpeed(1,targetSpeed[SPIN]);
-            setSpeed(2,-targetSpeed[SPIN]);
-            setSpeed(3,-targetSpeed[SPIN]);
-            */
+            //  txmsg.data8[2] = (int)200 >> 8;
+            //  txmsg.data8[3] = (int)200 & 0xFF; 
+
+            // move
+            movementControl(RCGet()->channel3, RCGet()->channel2, RCGet()->channel0);
 
 
         canTransmitTimeout(&CAND1, CAN_ANY_MAILBOX, &txmsg, TIME_MS2I(1));

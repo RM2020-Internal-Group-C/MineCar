@@ -9,12 +9,14 @@ systime_t updateTime;
 
 static void rxend(UARTDriver *uartp)
 {
+    (void)uartp;
     chSysLockFromISR();
     chThdResumeI(&uart_dbus_thread_handler, MSG_OK);
     chSysUnlockFromISR();
 }
 static UARTConfig uartcfg = {
-    NULL, NULL, rxend, NULL, NULL, 100000, USART_CR1_PCE, 0, 0};
+    NULL, NULL, rxend, NULL, NULL, 100000, USART_CR1_PCE, 0, 0
+};
 
 static void RCReset(void)
 {
@@ -39,8 +41,6 @@ static void processRxData(void)
 
     rcCtrl.s1 = ((rxbuf[5] >> 4) & 0x000C) >> 2;
     rcCtrl.s2 = ((rxbuf[5] >> 4) & 0x0003);
-
-    rcCtrl.wheel = (rxbuf[16] | rxbuf[17] << 8) - 1024;
 }
 
 static THD_WORKING_AREA(uart_dbus_thread_wa, 512);
@@ -52,7 +52,6 @@ static THD_FUNCTION(uart_dbus_thread, p)
     uartStart(UART_DRIVER, &uartcfg);
     msg_t rxmsg;
     systime_t timeout = TIME_MS2I(4U);
-    uint32_t count = 0;
 
     while (!chThdShouldTerminateX())
     {
@@ -72,7 +71,6 @@ static THD_FUNCTION(uart_dbus_thread, p)
         {
             timeout = TIME_MS2I(4U);
         }
-        count++;
     }
 }
 

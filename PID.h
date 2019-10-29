@@ -15,12 +15,15 @@ typedef struct
     float kd;
     float set;
     float get;
-    float err[2];
+    float errNOW;
+    float errLAST;
     float integral;
     float out;
     float maxOut;
+    float p;
+    float i;
+    float d;
 } pid_t;
-
 void PIDInit(pid_t *pid, int maxOut, float kp, float ki, float kd);
 
 // void PIDReset(pid_t pid, float kp, float ki, float kd);

@@ -23,8 +23,6 @@ typedef struct
     int16_t channel3;
     uint8_t s1;
     uint8_t s2;
-
-    int16_t wheel;
 } RC_control_t;
 
 void RCInit(void);
