@@ -22,8 +22,7 @@ float check;
 //static const float RCToMotorRatio = 400 / 660;
 
 static int16_t result[4] = {0, 0, 0, 0};
-RC_control_t *rc;
-int16_t const maxSpeed = 300;
+//int16_t const maxSpeed = 300;
 
 static const CANConfig cancfg = {
     CAN_MCR_ABOM | CAN_MCR_AWUM | CAN_MCR_TXFP,
