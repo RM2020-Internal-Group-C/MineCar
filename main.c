@@ -18,10 +18,11 @@
 // Nominal bit time: 12t_q
 
 float check;
+static volatile int cnt = 0;
 
 //static const float RCToMotorRatio = 400 / 660;
 
-static int16_t result[4] = {0, 0, 0, 0};
+static volatile int16_t result[4] = {0, 0, 0, 0};
 //int16_t const maxSpeed = 300;
 
 static const CANConfig cancfg = {
@@ -106,10 +107,10 @@ int main(void)
     RCInit();
 
     // PID Initialize  wheelStruct; maxOutputCurrent; kp; ki; kd
-    PIDInit(&pidWheel[0], 2000, 5, 0, 0);
-    PIDInit(&pidWheel[1], 2000, 5, 0, 0);
-    PIDInit(&pidWheel[2], 2000, 5, 0, 0);
-    PIDInit(&pidWheel[3], 2000, 5, 0, 0);
+    PIDInit(&pidWheel[0], 32000, 15.15, 0.0155, 10);
+    // PIDInit(&pidWheel[1], 2000, 5, 0, 0);
+    // PIDInit(&pidWheel[2], 2000, 5, 0, 0);
+    // PIDInit(&pidWheel[3], 2000, 5, 0, 0);
 
     /***************************************************************
      ****************************四轮***********************************/
@@ -123,32 +124,38 @@ int main(void)
             if (rxmsg.SID == 0x201)
             {
                 encoder[0] = rxmsg.data8[2] << 8 | rxmsg.data8[3];
-                encoder[0] = (encoder[0]) / 19;
+                encoder[0] = encoder[0];
             }
-            if (rxmsg.SID == 0x202)
-            {
-                encoder[1] = rxmsg.data8[2] << 8 | rxmsg.data8[3];
-                encoder[1] = (encoder[1]) / 19;
-            }
-            if (rxmsg.SID == 0x203)
-            {
-                encoder[2] = rxmsg.data8[2] << 8 | rxmsg.data8[3];
-                encoder[2] = (encoder[2]) / 19;
-            }
-            if (rxmsg.SID == 0x204)
-            {
-                encoder[3] = rxmsg.data8[2] << 8 | rxmsg.data8[3];
-                encoder[3] = (encoder[3]) / 19;
-            }
-
-            //  txmsg.data8[2] = (int)200 >> 8;
-            //  txmsg.data8[3] = (int)200 & 0xFF;
+            // if (rxmsg.SID == 0x202)
+            // {
+            //     encoder[1] = rxmsg.data8[2] << 8 | rxmsg.data8[3];
+            //     encoder[1] = (encoder[1]) / 19;
+            // }
+            // if (rxmsg.SID == 0x203)
+            // {
+            //     encoder[2] = rxmsg.data8[2] << 8 | rxmsg.data8[3];
+            //     encoder[2] = (encoder[2]) / 19;
+            // }
+            // if (rxmsg.SID == 0x204)
+            // {
+            //     encoder[3] = rxmsg.data8[2] << 8 | rxmsg.data8[3];
+            //     encoder[3] = (encoder[3]) / 19;
+            // }
 
             // move
-            movementControl(RCGet()->channel3, RCGet()->channel2, RCGet()->channel0);
+            //movementControl(RCGet()->channel3, RCGet()->channel2, RCGet()->channel0);
+
+            result[0] = PIDSet(&pidWheel[0], encoder[0], 0);
+            txmsg.data8[0] = (int)result[0] >> 8;
+            txmsg.data8[1] = (int)result[0] & 0xFF;
+
+            cnt++;
+            
+
 
             canTransmitTimeout(&CAND1, CAN_ANY_MAILBOX, &txmsg, TIME_MS2I(1));
         }
         chThdSleepMilliseconds(1);
     }
+
 }
