@@ -91,8 +91,11 @@ following refer to stm32f1 reference manual section 9.1
  * 4 - (GPIOA_BUTTON 15) ##the board has hardware debouncing and pull-up resistor installed to the button
  * B - (GPIOA_USART1_TX 9)
  */
+
+// port 8, 9, 10, 11 output push-pull
 #define VAL_GPIOACRL            0x89888882      /*  PA7...PA0 */
-#define VAL_GPIOACRH            0x588998B4      /* PA15...PA8 */
+//#define VAL_GPIOACRH            0x588998B4      /* PA15...PA8 */
+#define VAL_GPIOACRH            0x58891111      /* PA15...PA8 */
 #define VAL_GPIOAODR            0xFFFFFFFF
 
 /*
