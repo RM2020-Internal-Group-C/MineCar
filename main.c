@@ -77,6 +77,30 @@ void movementControl(float speedX, float speedY, float speedA)
     setSpeed(3, -speed3);
 }
 
+void pneumaticOpen1()
+{
+    palSetPadMode(GPIOA, 8, PAL_MODE_OUTPUT_PUSHPULL);
+    palWritePad(GPIOA, 8, PAL_HIGH);
+}
+
+void pneumaticClose1()
+{
+    palSetPadMode(GPIOA, 8, PAL_MODE_OUTPUT_PUSHPULL);
+    palWritePad(GPIOA, 8, PAL_LOW);
+}
+
+void pneumaticOpen2()
+{
+    palSetPadMode(GPIOA, 9, PAL_MODE_OUTPUT_PUSHPULL);
+    palWritePad(GPIOA, 9, PAL_HIGH);
+}
+
+void pneumaticClose2()
+{
+    palSetPadMode(GPIOA, 9, PAL_MODE_OUTPUT_PUSHPULL);
+    palWritePad(GPIOA, 9, PAL_LOW);
+}
+
 int main(void)
 {
     /*
@@ -104,6 +128,16 @@ int main(void)
 
     // Initialize dbus
     RCInit();
+
+    //Ouptput HIGH at PB3
+    palSetPadMode(GPIOA, 8, PAL_MODE_OUTPUT_PUSHPULL);
+    palSetPadMode(GPIOA, 9, PAL_MODE_OUTPUT_PUSHPULL);
+    palSetPadMode(GPIOA, 10, PAL_MODE_OUTPUT_PUSHPULL);
+
+    palWritePad(GPIOA, 8, PAL_HIGH);
+    palWritePad(GPIOA, 9, PAL_LOW);
+    palWritePad(GPIOA, 10, PAL_HIGH);
+
 
     // PID Initialize  wheelStruct; maxOutputCurrent; kp; ki; kd
     PIDInit(&pidWheel[0], 2000, 5, 0, 0);
