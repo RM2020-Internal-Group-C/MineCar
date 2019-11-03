@@ -82,7 +82,7 @@ void RCInit(void)
     RCReset();
     chThdCreateStatic(uart_dbus_thread_wa,
                       sizeof(uart_dbus_thread_wa),
-                      NORMALPRIO + 7,
+                      NORMALPRIO + 3,
                       uart_dbus_thread,
                       NULL);
 }

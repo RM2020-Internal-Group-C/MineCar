@@ -18,11 +18,12 @@
 // Target Baudrate: 1MHz
 // Nominal bit time: 12t_q
 
-float check;
+float rccheck;
+float PIDcheck2;
+float PIDcheck3;
 
 //static const float RCToMotorRatio = 400 / 660;
 
-int16_t result[4] = {0, 0, 0, 0};
 //int16_t const maxSpeed = 300;
 
 static const PWMConfig pwmcfg = {1000000,
@@ -35,39 +36,7 @@ static const PWMConfig pwmcfg = {1000000,
                                  0,
                                  0};
 
-// i stands for the index of motor, respectively 0, 1, 2, 3; targetSpeed
-void setSpeed(int i, float target) {
-    result[i] = PIDSet(&pidWheel[i], motorSpeedGet(i), target);
-    canSetSpeed(i, (int16_t)result[i]);
-}
-// speedX: X Direction SpeedY: Y Direction SpeedA: Angular Speed
-void movementControl(float speedX, float speedY, float speedA)
-{
-    float speed0 = speedX + speedY + speedA;
-    float speed1 = speedX - speedY - speedA;
-    float speed2 = speedX - speedY + speedA;
-    float speed3 = speedX + speedY - speedA;
-
-    float max = speed0;
-    if (max < speed1)
-        max = speed1;
-    if (max < speed2)
-        max = speed2;
-    if (max < speed3)
-        max = speed3;
-
-    if (max > 400)
-    {
-        speed0 = speed0 / max * 400;
-        speed1 = speed1 / max * 400;
-        speed2 = speed2 / max * 400;
-        speed3 = speed3 / max * 400;
-    }
-    setSpeed(0, speed0);
-    setSpeed(1, -speed1);
-    setSpeed(2, speed2);
-    setSpeed(3, -speed3);
-}
+// i stands for the index of motor, respectively 0, 1, 2, 3; targetSpee
 
 int main(void)
 {
@@ -94,18 +63,19 @@ int main(void)
     RCInit();
 
     // PID Initialize  wheelStruct; maxOutputCurrent; kp; ki; kd
-    PIDInit(&pidWheel[0], 2000, 5, 0, 0);
-    PIDInit(&pidWheel[1], 2000, 5, 0, 0);
-    PIDInit(&pidWheel[2], 2000, 5, 0, 0);
-    PIDInit(&pidWheel[3], 2000, 5, 0, 0);
 
     /***************************************************************
      ****************************四轮***********************************/
 
     while (true)
     {
-        movementControl(RCGet()->channel3, RCGet()->channel2, RCGet()->channel0);
- 
-        chThdSleepMilliseconds(2);
+        //movementControl(RCGet()->channel3, RCGet()->channel2, RCGet()->channel0);
+        palSetLine(LINE_LED);
+        rccheck = RCGet()->channel3*400/660;
+        // PIDcheck1 = pidWheel[1].errNOW;
+        // PIDcheck2 = pidWheel[1].set;
+        // PIDcheck3 = pidWheel[1].get;
+        chThdSleepMilliseconds(5);
+        palClearLine(LINE_LED);
     }
 }
