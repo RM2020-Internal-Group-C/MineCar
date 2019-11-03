@@ -77,29 +77,42 @@ void movementControl(float speedX, float speedY, float speedA)
     setSpeed(3, -speed3);
 }
 
-void pneumaticOpen1()
+void pneumaticOpen5()
 {
     palSetPadMode(GPIOA, 8, PAL_MODE_OUTPUT_PUSHPULL);
     palWritePad(GPIOA, 8, PAL_HIGH);
 }
 
-void pneumaticClose1()
+void pneumaticClose5()
 {
     palSetPadMode(GPIOA, 8, PAL_MODE_OUTPUT_PUSHPULL);
     palWritePad(GPIOA, 8, PAL_LOW);
 }
 
-void pneumaticOpen2()
+void pneumaticOpen4()
 {
     palSetPadMode(GPIOA, 9, PAL_MODE_OUTPUT_PUSHPULL);
     palWritePad(GPIOA, 9, PAL_HIGH);
 }
 
-void pneumaticClose2()
+void pneumaticClose4()
 {
     palSetPadMode(GPIOA, 9, PAL_MODE_OUTPUT_PUSHPULL);
     palWritePad(GPIOA, 9, PAL_LOW);
 }
+
+void pneumaticOpen3()
+{
+    palSetPadMode(GPIOA, 9, PAL_MODE_OUTPUT_PUSHPULL);
+    palWritePad(GPIOA, 9, PAL_HIGH);
+}
+
+void pneumaticClose3()
+{
+    palSetPadMode(GPIOA, 9, PAL_MODE_OUTPUT_PUSHPULL);
+    palWritePad(GPIOA, 9, PAL_LOW);
+}
+
 
 int main(void)
 {
