@@ -2,7 +2,10 @@
 #define __MOTOR_H_
 #include "stdint.h"
 
-#define MAX_SPEED       600
+#define MAX_SPEED       1000
+#define KP              20
+#define KI              0.015
+#define KD              0
 float motorSpeedGet(int i);
 void motorInit(void);
 void movementControl(float speedX, float speedY, float speedA);

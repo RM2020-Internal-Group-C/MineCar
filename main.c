@@ -118,10 +118,7 @@ int main(void)
     {
         //movementControl(RCGet()->channel3, RCGet()->channel2, RCGet()->channel0);
         palSetLine(LINE_LED);
-        rccheck = RCGet()->channel3*400/660;
-        // PIDcheck1 = pidWheel[1].errNOW;
-        // PIDcheck2 = pidWheel[1].set;
-        // PIDcheck3 = pidWheel[1].get;
+        rccheck = RCGet()->channel3*MAX_SPEED/660;
         chThdSleepMilliseconds(5);
         palClearLine(LINE_LED);
     }

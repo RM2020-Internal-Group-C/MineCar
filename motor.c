@@ -30,7 +30,7 @@ static THD_FUNCTION(can_rx_thd, p)
             {
                 motorSpeed[0] = rxmsg.data8[2] << 8 | rxmsg.data8[3];
                 rxcnt[0]++;
-                motorSpeed[0] = (motorSpeed[0]) /19;
+                motorSpeed[0] = (motorSpeed[0]) /27;
             }
             if (rxmsg.SID == 0x202)
             {
@@ -42,7 +42,7 @@ static THD_FUNCTION(can_rx_thd, p)
             {
                 motorSpeed[2] = rxmsg.data8[2] << 8 | rxmsg.data8[3];
                 rxcnt[2]++;
-                motorSpeed[2] = (motorSpeed[2])/27;
+                motorSpeed[2] = (motorSpeed[2])/19;
             }
             if (rxmsg.SID == 0x204)
             {
@@ -68,7 +68,7 @@ static THD_FUNCTION(can_tx_thd, p)
         // txmsg.data8[0] = (int)1000 >> 8;
         // txmsg.data8[1] = (int)1000 & 0xFF;
         movementControl(
-            RCGet()->channel2, RCGet()->channel3, RCGet()->channel0);
+            RCGet()->channel3, RCGet()->channel2, RCGet()->channel0);
         // setSpeed(0, 1000);
         canTransmitTimeout(&CAND1, CAN_ANY_MAILBOX, &txmsg, TIME_MS2I(1));
         chThdSleepMilliseconds(5);
@@ -120,10 +120,10 @@ float motorSpeedGet(int i)
 
 void motorInit(void)
 {
-    PIDInit(&pidWheel[0], MAX_SPEED, 20, 0.1, 0);
-    PIDInit(&pidWheel[1], MAX_SPEED, 20, 0.1, 0);
-    PIDInit(&pidWheel[2], MAX_SPEED, 20, 0.1, 0);
-    PIDInit(&pidWheel[3], MAX_SPEED, 20, 0.1, 0);
+    PIDInit(&pidWheel[0], MAX_SPEED, KP, KI, KD);
+    PIDInit(&pidWheel[1], MAX_SPEED, KP, KI, KD);
+    PIDInit(&pidWheel[2], MAX_SPEED, KP, KI, KD);
+    PIDInit(&pidWheel[3], MAX_SPEED, KP, KI, KD);
     canStart(&CAND1, &cancfg);
 
     chThdCreateStatic(can_rx_thd_wa,
