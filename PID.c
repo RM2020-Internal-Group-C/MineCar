@@ -1,6 +1,6 @@
 #include "PID.h"
 
-pid_t pidWheel[4] = {{0}, {0}, {0}, {0}};
+pid_t pidmotor[2] = {{0}, {0}};
 
 static void limit(float *a, float max)
 {
@@ -20,15 +20,24 @@ void PIDInit(pid_t *pid, int maxOut, float kp, float ki, float kd)
     pid->ki = ki;
     pid->kd = kd;
     pid->maxOut = maxOut;
+    pid->pDirection = 0;
+    pid->nDirection = 0;
 }
 
 float clamp(float i) { return (i < 0) ? -i : i; }
 
-float PIDSet(pid_t *pid, float get, float set)
+float PIDSet(pid_t *pid, float set , int last, int now)
 {
-    pid->get = get;
+    if((now - last) < (8191 - now + last))
+    {
+        pid->pDirection += (now - last);
+    }
+    else if((now - last) > (8191 - now + last)){
+        pid->nDirection += (8191 - now + last);
+    }
+    pid->get = pid->pDirection;
     pid->set = set;
-    pid->errNOW = set - get;
+    pid->errNOW = set - pid->pDirection;
     pid->p = pid->errNOW * pid->kp;
     pid->i += pid->errNOW * pid->ki;
     pid->d = (pid->errNOW - pid->errLAST) * pid->kd;
@@ -37,3 +46,4 @@ float PIDSet(pid_t *pid, float get, float set)
     limit(&pid->out, pid->maxOut);
     return pid->out;
 }
+

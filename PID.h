@@ -16,11 +16,14 @@ typedef struct
     float p;
     float i;
     float d;
+    int pDirection;
+    int nDirection;
 } pid_t;
 //Initiallize pid: maxOut:maximum outpus, Kp, Ki, Kd 
 void PIDInit(pid_t *pid, int maxOut, float kp, float ki, float kd);
 
-float PIDSet(pid_t *pid, float get, float set);
+float PIDSet(pid_t *pid, float set , int last, int now);
 
-extern pid_t pidWheel[4];
+
+extern pid_t pidmotor[2];
 #endif
