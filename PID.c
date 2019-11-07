@@ -1,6 +1,6 @@
 #include "PID.h"
 
-pid_t pidWheel[4] = {{0}, {0}, {0}, {0}};
+pid_t pidWheel[4];
 
 static void clamp(float *a, float max)
 {
@@ -22,7 +22,6 @@ void PIDInit(pid_t *pid, int maxOut, float kp, float ki, float kd)
     pid->maxOut = maxOut;
 }
 
-// float absp(float i) { return (i < 0) ? -i : i; }
 
 float PIDSet(pid_t *pid, float get, float set)
 {
