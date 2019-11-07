@@ -99,16 +99,6 @@ int main(void)
     // Initialize dbus
     RCInit();
 
-    //Ouptput HIGH at PB3
-    palSetPadMode(GPIOA, 8, PAL_MODE_OUTPUT_PUSHPULL);
-    palSetPadMode(GPIOA, 9, PAL_MODE_OUTPUT_PUSHPULL);
-    palSetPadMode(GPIOA, 10, PAL_MODE_OUTPUT_PUSHPULL);
-
-    palWritePad(GPIOA, 8, PAL_HIGH);
-    palWritePad(GPIOA, 9, PAL_LOW);
-    palWritePad(GPIOA, 10, PAL_HIGH);
-
-
     // PID Initialize  wheelStruct; maxOutputCurrent; kp; ki; kd
 
     /***************************************************************
