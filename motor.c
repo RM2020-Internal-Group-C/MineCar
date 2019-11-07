@@ -11,7 +11,7 @@ CANTxFrame txmsg;
 CANRxFrame rxmsg;
 int16_t motorSpeed[4];
 int16_t result[4] = {0, 0, 0, 0};
-// uint16_t rxcnt[4] = {0};
+
 float test = 0;
 float const maxSpeed = 8000;
 float ki = 0.05;
@@ -71,7 +71,6 @@ static THD_FUNCTION(can_tx_thd, p)
     (void)p;
     while (true)
     {
-        // check = RCGet()->channel3*MAX_SPEED/660;canReceiveTimeout
         txmsg.DLC = 8;
         txmsg.IDE = CAN_IDE_STD;
         txmsg.RTR = CAN_RTR_DATA;

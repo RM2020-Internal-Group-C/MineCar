@@ -22,7 +22,6 @@ void PIDInit(pid_t *pid, int maxOut, float kp, float ki, float kd)
     pid->maxOut = maxOut;
 }
 
-// float absp(float i) { return (i < 0) ? -i : i; }
 
 float PIDSet(pid_t *pid, float get, float set)
 {
@@ -31,7 +30,6 @@ float PIDSet(pid_t *pid, float get, float set)
     pid->errNOW = set - get;
     pid->p = pid->errNOW * pid->kp;
     pid->i += pid->errNOW * pid->ki;
-    // clamp(&pid->i, 500);
     pid->d = (pid->errNOW - pid->errLAST) * pid->kd;
     pid->out = pid->p + pid->i + pid->d;
     pid->errLAST = pid->errNOW;
