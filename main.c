@@ -64,14 +64,14 @@ void pneumaticClose4()
 
 void pneumaticOpen3()
 {
-    palSetPadMode(GPIOA, 9, PAL_MODE_OUTPUT_PUSHPULL);
-    palWritePad(GPIOA, 9, PAL_HIGH);
+    palSetPadMode(GPIOA, 10, PAL_MODE_OUTPUT_PUSHPULL);
+    palWritePad(GPIOA, 10, PAL_HIGH);
 }
 
 void pneumaticClose3()
 {
-    palSetPadMode(GPIOA, 9, PAL_MODE_OUTPUT_PUSHPULL);
-    palWritePad(GPIOA, 9, PAL_LOW);
+    palSetPadMode(GPIOA, 10, PAL_MODE_OUTPUT_PUSHPULL);
+    palWritePad(GPIOA, 10, PAL_LOW);
 }
 
 
@@ -116,10 +116,25 @@ int main(void)
 
     while (true)
     {
+        rccheck = RCGet()->s1;
         //movementControl(RCGet()->channel3, RCGet()->channel2, RCGet()->channel0);
-        palSetLine(LINE_LED);
-        rccheck = RCGet()->channel3*MAX_SPEED/660;
+        if(RCGet()->channel1 >= 600){
+            pneumaticOpen3();
+        } else {
+            pneumaticClose3();
+        }
+
+        if(RCGet()->channel1 <= -600){
+            pneumaticOpen4();
+        } else {
+            pneumaticClose4();
+        }
+
+        if(RCGet()->s1 == 2){
+            pneumaticOpen5();
+        } else {
+            pneumaticClose5();
+        }
         chThdSleepMilliseconds(5);
-        palClearLine(LINE_LED);
     }
 }
