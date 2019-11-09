@@ -89,6 +89,7 @@ static THD_FUNCTION(can_tx_thd, p)
 // speedX: X Direction SpeedY: Y Direction SpeedA: Angular Speed
 void movementControl(float speedX, float speedY, float speedA)
 {
+
     float speed0 = (speedX + speedY + speedA);
     float speed1 = (speedX - speedY - speedA);
     float speed2 = (speedX - speedY + speedA);

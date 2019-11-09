@@ -23,8 +23,13 @@ typedef struct
     int16_t channel3;
     uint8_t s1;
     uint8_t s2;
+    int16_t channel0L;
+    int16_t channel1L;
+    int16_t channel2L;
+    int16_t channel3L;
 } RC_control_t;
 
 void RCInit(void);
+static int16_t limitAcc(int16_t now,int16_t last);
 RC_control_t *RCGet(void);
 #endif
