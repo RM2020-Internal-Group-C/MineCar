@@ -108,13 +108,13 @@ int main(void)
     {
         rccheck = RCGet()->s1;
         //movementControl(RCGet()->channel3, RCGet()->channel2, RCGet()->channel0);
-        if(RCGet()->channel1 >= 600){
+        if(RCGet()->channel3 >= 600){
             pneumaticOpen3();
         } else {
             pneumaticClose3();
         }
 
-        if(RCGet()->channel1 <= -600){
+        if(RCGet()->channel3 <= -600){
             pneumaticOpen4();
         } else {
             pneumaticClose4();

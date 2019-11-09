@@ -12,11 +12,10 @@ CANRxFrame rxmsg;
 int16_t motorSpeed[4];
 int16_t result[4] = {0, 0, 0, 0};
 
-float test = 0;
-float const maxSpeed = 8000;
-float ki = 0.05;
+float const maxSpeed = 4000;
+float ki = 0.3;
 float kp = 10;
-float kd = 0;
+float kd = 25;
 static const CANConfig cancfg = {
     CAN_MCR_ABOM | CAN_MCR_AWUM | CAN_MCR_TXFP,
     CAN_BTR_SJW(0) | CAN_BTR_TS2(1) | CAN_BTR_TS1(8) | CAN_BTR_BRP(2)};
@@ -78,7 +77,7 @@ static THD_FUNCTION(can_tx_thd, p)
         // txmsg.data8[0] = (int)1000 >> 8;
         // txmsg.data8[1] = (int)1000 & 0xFF;
         movementControl(
-            RCGet()->channel3 * maxSpeed/660, RCGet()->channel2*maxSpeed/660, RCGet()->channel0*maxSpeed/660);
+            RCGet()->channel1 * maxSpeed/660, RCGet()->channel0*maxSpeed/660, RCGet()->channel2*maxSpeed/660);
         // setSpeed(0, 1000);
         // setSpeed(1, test);
         canTransmitTimeout(&CAND1, CAN_ANY_MAILBOX, &txmsg, TIME_MS2I(1));
