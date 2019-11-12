@@ -28,7 +28,6 @@ static void RCReset(void)
     rcCtrl.channel0L = 0;
     rcCtrl.channel1L = 0;
     rcCtrl.channel2L = 0;
-    rcCtrl.channel3L = 0;
 }
 //process received data
 static void processRxData(void)
@@ -49,14 +48,12 @@ static void processRxData(void)
     rcCtrl.channel2L = rcCtrl.channel2;
     rcCtrl.channel3 = (((int16_t)rxbuf[4] >> 1) | ((int16_t)rxbuf[5] << 7)) & 0x07FF;
     rcCtrl.channel3 -= RC_CH_VALUE_OFFSET;
-    rcCtrl.channel3 = limitAcc(rcCtrl.channel3,rcCtrl.channel3L);
-    rcCtrl.channel3L = rcCtrl.channel3;
 
     rcCtrl.s1 = ((rxbuf[5] >> 4) & 0x000C) >> 2;
     rcCtrl.s2 = ((rxbuf[5] >> 4) & 0x0003);
 }
 
-static int16_t limitAcc(int16_t now,int16_t last)
+int16_t limitAcc(int16_t now,int16_t last)
 {
     int16_t a = 330;
     if(now > last + a){
